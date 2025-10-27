@@ -10,18 +10,18 @@ import SwiftData
 
 struct BankListView: View {
     @Environment(\.modelContext) private var modelContext
-   
+    
     @Query(sort: [SortDescriptor(\BankModel.date)])
-     var datePayments: [BankModel]
+    var datePayments: [BankModel]
     
     @Query(sort: [SortDescriptor(\BankModel.name)])
-     var namePayments: [BankModel]
+    var namePayments: [BankModel]
     
     @Query(sort: [SortDescriptor(\BankModel.amount)])
-     var amountPayments: [BankModel]
+    var amountPayments: [BankModel]
     
     // Completed Payments for name
-   
+    
     @Query(
         filter: #Predicate<BankModel> { $0.isCompleted == true },
         sort: [SortDescriptor(\BankModel.name)]
@@ -43,10 +43,8 @@ struct BankListView: View {
         sort: [SortDescriptor(\BankModel.amount)]
     )
     var completedAmountPayment : [BankModel]
-   
     
     @State private var showCompletedOnly: Bool = false
-    
     @State private var newName: String = ""
     @State private var selectedSortOption: SortOption = .byName
     @State private var selectedDate = Date()
@@ -57,12 +55,12 @@ struct BankListView: View {
         case byDate = "By Date"
         case byAmount = "By Amount"
     }
-   
+    
     private var sortedPayments: [BankModel] {
         switch selectedSortOption {
         case .byName:
             showCompletedOnly ? completedNamePayment : namePayments
-            case .byDate:
+        case .byDate:
             showCompletedOnly ? completedDatePayment : datePayments
         case .byAmount:
             showCompletedOnly ? completedAmountPayment : amountPayments
@@ -94,13 +92,13 @@ struct BankListView: View {
                                 .clipShape(.rect(cornerRadius: 10))
                                 .foregroundStyle(.white)
                         }
-                      }
+                    }
                     
                     // Date Picker
                     DatePicker(
                         "Selected Date",
-                         selection: $selectedDate,
-                         in: Date()... )
+                        selection: $selectedDate,
+                        in: Date()... )
                     
                     // Segmented Picker
                     Picker(
@@ -115,9 +113,9 @@ struct BankListView: View {
                     
                     // Toggle Completion
                     Toggle("Show Completed Only", isOn: $showCompletedOnly)
-                    
                 }
                 .padding()
+                
                 // List
                 List(sortedPayments) { payment in
                     HStack {
@@ -125,12 +123,10 @@ struct BankListView: View {
                             toggleCompletion(payment)
                         } label: {
                             Image(systemName:
-                          payment.isCompleted ? "checkmark.circle" : "circle")
+                                    payment.isCompleted ? "checkmark.circle" : "circle")
                             .font(.caption)
                             .foregroundStyle(payment.isCompleted ? .green : .gray)
                         }
-
-                        
                         Text(payment.name)
                             .foregroundStyle(payment.isCompleted ? .gray : .blue)
                             .strikethrough(payment.isCompleted, color: .gray)
@@ -157,7 +153,7 @@ struct BankListView: View {
             .navigationTitle("Payments")
         }
     }
-   
+    
     private func addPayment() {
         guard newName.count >= 2  else {
             print("The name must have at least 2 characters")
@@ -167,9 +163,8 @@ struct BankListView: View {
             name: newName,
             date: selectedDate,
             amount: Double(amount) ?? 0
-            )
+        )
         modelContext.insert(newPayment)
-        
         do {
             try modelContext.save()
         } catch {
