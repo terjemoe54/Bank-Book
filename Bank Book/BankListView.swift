@@ -17,6 +17,9 @@ struct BankListView: View {
     @Query(sort: [SortDescriptor(\BankModel.name)])
      var namePayments: [BankModel]
     
+    @Query(sort: [SortDescriptor(\BankModel.amount)])
+     var amountPayments: [BankModel]
+    
     // Completed Payments for name
    
     @Query(
@@ -32,6 +35,14 @@ struct BankListView: View {
         sort: [SortDescriptor(\BankModel.date)]
     )
     var completedDatePayment : [BankModel]
+    
+    // Completed Payments for amount
+    
+    @Query(
+        filter: #Predicate<BankModel> { $0.isCompleted == true },
+        sort: [SortDescriptor(\BankModel.amount)]
+    )
+    var completedAmountPayment : [BankModel]
    
     
     @State private var showCompletedOnly: Bool = false
@@ -39,10 +50,12 @@ struct BankListView: View {
     @State private var newName: String = ""
     @State private var selectedSortOption: SortOption = .byName
     @State private var selectedDate = Date()
+    @State private var amount: String = ""
     
     enum SortOption: String, CaseIterable {
         case byName = "By Name"
         case byDate = "By Date"
+        case byAmount = "By Amount"
     }
    
     private var sortedPayments: [BankModel] {
@@ -51,6 +64,8 @@ struct BankListView: View {
             showCompletedOnly ? completedNamePayment : namePayments
             case .byDate:
             showCompletedOnly ? completedDatePayment : datePayments
+        case .byAmount:
+            showCompletedOnly ? completedAmountPayment : amountPayments
         }
     }
     
@@ -63,8 +78,13 @@ struct BankListView: View {
                 VStack {
                     // Textfield
                     HStack {
-                        TextField("New Payment", text: $newName)
-                            .textFieldStyle(.roundedBorder)
+                        VStack {
+                            TextField("New Payment", text: $newName)
+                                .textFieldStyle(.roundedBorder)
+                            
+                            TextField("Amount", text: $amount)
+                                .textFieldStyle(.roundedBorder)
+                        }
                         Button {
                             addPayment()
                         } label: {
@@ -117,7 +137,7 @@ struct BankListView: View {
                         Spacer()
                         VStack(alignment: .leading) {
                             Text(payment.date, style: .date)
-                            //   Text(payment.amounth)
+                            Text(String(payment.amount))
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
@@ -145,8 +165,8 @@ struct BankListView: View {
         }
         let newPayment = BankModel(
             name: newName,
-            date: selectedDate
-        //    amount: 0.00
+            date: selectedDate,
+            amount: Double(amount) ?? 0
             )
         modelContext.insert(newPayment)
         
@@ -158,7 +178,7 @@ struct BankListView: View {
         
         newName = ""
         selectedDate = Date()
-        
+        amount = ""
     }
     
     private func deletePayment(_ payment: BankModel) {
