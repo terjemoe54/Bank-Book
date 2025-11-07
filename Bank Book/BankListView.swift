@@ -97,8 +97,7 @@ struct BankListView: View {
                     // Date Picker
                     DatePicker(
                         "Selected Date",
-                        selection: $selectedDate,
-                        in: Date()... )
+                        selection: $selectedDate,in: Date()...,displayedComponents: .date)
                     
                     // Segmented Picker
                     Picker(
