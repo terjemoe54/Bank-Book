@@ -10,7 +10,6 @@ import SwiftData
 
 @Model
 class BankModel {
-    
     var name: String
     var date: Date
     var amount: Double

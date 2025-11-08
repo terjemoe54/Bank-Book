@@ -50,12 +50,6 @@ struct BankListView: View {
     @State private var selectedDate = Date()
     @State private var amount: String = ""
     
-    enum SortOption: String, CaseIterable {
-        case byName = "By Name"
-        case byDate = "By Date"
-        case byAmount = "By Amount"
-    }
-    
     private var sortedPayments: [BankModel] {
         switch selectedSortOption {
         case .byName:
