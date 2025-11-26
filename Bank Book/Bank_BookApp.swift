@@ -4,6 +4,7 @@
 //
 //  Created by Terje Moe on 25/10/2025.
 //
+// Denne bruker SwiftData
 
 import SwiftUI
 import SwiftData
